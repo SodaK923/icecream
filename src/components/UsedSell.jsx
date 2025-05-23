@@ -3,19 +3,21 @@ import { useState, useEffect } from 'react';
 import { supabase } from "../supabase/supabase";
 import UsedItem from './UsedItem';
 
-export function Used() {
+
+export function UsedSell() {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
             let { data, error } = await supabase
                 .from('trades')
-                .select('*');
-            //.eq('type', 4);
+                .select('*,categories(name)')
+                .eq('type', 4);
             if (error) {
                 console.log("error: ", error);
                 console.log("data: ", data);
-            } else {
+            }
+            if(data) {
                 setPosts(data);
             }
         }

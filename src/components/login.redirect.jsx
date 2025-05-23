@@ -1,10 +1,12 @@
+import "../css/login.redirect.css"
 import { useEffect, useRef, useState } from 'react';
 import { getUser } from '../utils/getUser';
 import { useNavigate } from 'react-router-dom';
+import { useRegion } from '../hooks/useRegion';
 
-const createNickname = async (ref, navigate) => {
+const createNickname = async (ref, city, district) => {
   try {
-    const user = await getUser();
+    const { user } = await getUser();
     if (!user) throw new Error("로그인된 유저가 없습니다.");
 
     const nickname = ref.current.value;
@@ -15,10 +17,10 @@ const createNickname = async (ref, navigate) => {
     const res = await fetch('https://mkoiswzigibhylmtkzdh.supabase.co/functions/v1/user', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${user.token}`,  // 토큰 넣기
+        'Authorization': `Bearer ${user.token}`, 
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: user.id, name: nickname }),
+      body: JSON.stringify({ id: user.id, name: nickname, region:JSON.stringify([ city, district ]), }),
     });
 
     if (!res.ok) {
@@ -26,7 +28,6 @@ const createNickname = async (ref, navigate) => {
       console.error("닉네임 업데이트 실패:", errorData.error ?? res.statusText);
       return;
     }
-    navigate("/");
   } catch (err) {
     console.error("예외 발생:", err.message);
   }
@@ -34,14 +35,20 @@ const createNickname = async (ref, navigate) => {
 
 export function LoginRedirect() {
   const inputRef = useRef();
-  const [toggle, setToggle] = useState(false);
+  const [ toggle, setToggle] = useState(false);
   const navigate = useNavigate();
+  const { 
+    city, setCity,
+    district, setDistrict,
+    citys, districts,
+    setBoth,
+  } = useRegion();
 
   useEffect(() => {
     const isTable = async () => {
       const { user } = await getUser();
       if (!user || !user.id) return false;
-      const query = new URLSearchParams({ id: user.id, name: user.name }).toString();
+      const query = new URLSearchParams({ id: user.id, name: user.name, region:JSON.stringify([ city, district ]) }).toString();
       const url = `https://mkoiswzigibhylmtkzdh.supabase.co/functions/v1/user?${query}`;
       const res = await fetch(url, {
         method: 'GET',
@@ -51,31 +58,65 @@ export function LoginRedirect() {
       });
 
       if (!res.ok) {
-        console.error('서버 요청 실패:', res);
         return false;
       }
-
       const result = await res.json();
-      return result.created;
+      return result;
     };
+    if(city !== undefined) {
+      isTable().then((data) => {
+        if (!data.created) {
+          setBoth(data.user.region[0],data.user.region[1])
+          //navigate('/'); 
+        } 
+        else {
+          setToggle(data.created); 
+        }
+      });
+    }
+  }, [city]); 
 
-    isTable().then((created) => {
-      console.log(created)
-      if (!created) { navigate('/');} else { setToggle(created); }
-    });
-  }, []);
-
-  if(!toggle) {return <div>로그인 처리 중입니다.</div>}
-  else { return <>
+  //f(!toggle) { return(<>로그인 시도중입니다.</>)}
+  /*else*/ return(<>
     <form onSubmit={(e) => {
       e.preventDefault()
       setToggle(false)
-      createNickname(inputRef, navigate)
+      console.log(city,district)
+      createNickname(inputRef, city, district).then(()=>{
+        //navigate('/')
+        console.log(city, district)
+      })
     }}>
       <input placeholder='닉네임 입력' ref={inputRef} />
-      <button type='submit'>
+      <select 
+      className="toogle_item" 
+      name="region"
+      value={city}
+      onChange={(e) =>{
+        e.preventDefault();
+        setCity(e.target.value)
+      }}
+      >
+        { citys.map((o,k)=>
+          <option key={k} value={o}>{o}</option>
+        )}
+      </select>
+      <select 
+      className="toogle_item" 
+      name="region"
+      value={district}
+      onChange={(e) =>{
+        e.preventDefault();
+        setDistrict(e.target.value)
+      }}
+      >
+        { districts.map((o,k)=>
+          <option key={k} value={o}>{o}</option>
+        )}
+      </select>
+      <button type='submit' style={{ marginLeft: 10 }}>
         입력
       </button>
     </form>
-  </>}
+  </>)
 }

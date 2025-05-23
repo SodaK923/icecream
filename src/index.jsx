@@ -8,7 +8,9 @@ import { Layout } from './components/layout';
 import { Login } from './components/login';
 import { LoginRedirect } from './components/login.redirect'
 import { TestPage } from './components/testpage';
-import { Used } from './components/Used'
+import { Trade } from './components/Trade'
+import { UsedSell } from './components/UsedSell';
+import UsedCreate from './components/UsedCreate';
 
 function Home() {
   return <div>
@@ -17,16 +19,21 @@ function Home() {
 }
 
 function App() {
+
   return (
     <BrowserRouter>
+      {/* 리덕스 사용 */}
       <ReduxProvider store={redux}>
+        {/* Layout 컴포넌트 안에 <Routes> </Routes> 내용들이 들어감 */}
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/login/redirect' element={<LoginRedirect />} />
             <Route path='/test' element={<TestPage />} />
-            <Route path='/거래/중고나눔' element={<Used />} />
+            <Route path='/거래' element={<Trade />} />
+            <Route path='/거래/벼룩해요' element={<UsedSell />} />
+            <Route path='/거래/글작성' element={<UsedCreate />} />
           </Routes>
         </Layout>
       </ReduxProvider>
