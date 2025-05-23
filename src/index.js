@@ -13,7 +13,6 @@ function Home() {
   return (
   <>
     <div>임시 홈페이지 적용</div>
-    <Link to="/trade">거래</Link>
   </>
   );
 }
@@ -26,7 +25,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path='/login' element={<Login />} />
           <Route path='/login/redirect' element={<LoginRedirect />} />
-          <Route path='/trade' element={<Trade />} />
         </Routes>
       </Layout>
     </Router>
