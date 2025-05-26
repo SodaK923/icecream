@@ -11,11 +11,10 @@ import { TestPage } from './components/testpage';
 import { Trade } from './components/Trade'
 import { UsedSell } from './components/UsedSell';
 import UsedCreate from './components/UsedCreate';
+import { UsedShare } from './components/UsedShare';
 
 function Home() {
-  return <div>
-    메인페이지
-  </div>;
+  return <p></p>;
 }
 
 function App() {
@@ -24,15 +23,16 @@ function App() {
     <BrowserRouter>
       {/* 리덕스 사용 */}
       <ReduxProvider store={redux}>
-        {/* Layout 컴포넌트 안에 <Routes> </Routes> 내용들이 들어감 */}
+        {/* Layout 컴포넌트 안에 <Routes> </Routes> 내용들이 */}
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/login/redirect' element={<LoginRedirect />} />
-            <Route path='/test' element={<TestPage />} />
-            <Route path='/거래' element={<Trade />} />
+            <Route path='/test' element={<Home />} />
+            <Route path='/trade' element={<Trade />} />
             <Route path='/거래/벼룩해요' element={<UsedSell />} />
+            <Route path='/거래/드림해요' element={<UsedShare />} />
             <Route path='/거래/글작성' element={<UsedCreate />} />
           </Routes>
         </Layout>
@@ -44,7 +44,7 @@ function App() {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-    <App />
+  <App />
   // </React.StrictMode>
 );
 

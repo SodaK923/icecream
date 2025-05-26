@@ -11,7 +11,8 @@ export function Trade() {
         const fetchPosts = async () => {
             let { data, error } = await supabase
                 .from('trades')
-                .select('*,categories(name)');
+                .select('*,categories(name)')
+                .eq('super_category', 3);
             if (error) {
                 console.log("error: ", error);
                 console.log("data: ", data);
@@ -26,7 +27,7 @@ export function Trade() {
     return (
         <div>
             <div>
-                <Link to={'/거래/글작성'}>글작성</Link>
+                <Link to={'/trade/write'}>글작성</Link>
             </div>
             {posts.map((used) => (
                 <UsedItem key={used.id} used={used}>

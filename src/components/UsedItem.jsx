@@ -11,6 +11,8 @@ const UsedItem=({used})=>{
             </div>
             <h1>{used.title}</h1>
             <p>{used.content}</p>
+            {/* <p>{used.create_date}</p> */}
+            {/* <p>{used.likes}</p> */}
         </div>
     );
 }

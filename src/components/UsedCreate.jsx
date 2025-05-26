@@ -28,7 +28,6 @@ const UsedCreate = () => {
         console.log('업로드 성공:', data)
     }
 
-
     const handleCreate = async (e) => {
         e.preventDefault();
         const urls = await uploadFiles(files);
@@ -41,14 +40,23 @@ const UsedCreate = () => {
                 title: title,
                 content: content,
                 price: Number(price),
+                location: 'null',
+                cnt: 0,
+                likes: 0,
                 main_img: main_img || null,
                 detail_img1: detail_img1 || null,
                 detail_img2: detail_img2 || null,
                 detail_img3: detail_img3 || null,
                 detail_img4: detail_img4 || null,
-                type: Number(category),
+                category: Number(category),
+                super_category: 3,
+                limit_type: 'null',
+                limit: 'null',
+                state: 'null',
                 create_date: now,
-                update_date: now
+                update_date: now,
+                sales_begin: 'null',
+                sales_end: 'null'
             }])
             .select()
         if (error) {
@@ -72,11 +80,11 @@ const UsedCreate = () => {
                 <input value={title} onChange={e => setTitle(e.target.value)} placeholder="제목" />
                 <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="내용" />
                 <input value={price} onChange={e => setPrice(e.target.value)} placeholder="가격" />
-                <input
+                {/* <input
                     type="file"
                     multiple
                     onChange={e => setFiles(Array.from(e.target.files))}
-                />
+                /> */}
 
 
                 <button type="submit">등록</button>

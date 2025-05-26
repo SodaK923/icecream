@@ -4,7 +4,7 @@ import { supabase } from "../supabase/supabase";
 import UsedItem from './UsedItem';
 
 
-export function UsedSell() {
+export function UsedShare() {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
@@ -12,7 +12,7 @@ export function UsedSell() {
             let { data, error } = await supabase
                 .from('trades')
                 .select('*,categories(name)')
-                .eq('category', 4)
+                .eq('category', 5)
                 .eq('super_category', 3);
             if (error) {
                 console.log("error: ", error);
