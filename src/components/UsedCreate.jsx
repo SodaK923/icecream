@@ -4,7 +4,7 @@ import { supabase } from "../supabase/supabase";
 import { useImage } from "../hooks/useImage";
 //import { getUser } from '../utils/getUser';
 
-const UsedCreate = () => {
+export function UsedCreate(){
     const now = new Date().toISOString();
     const navigate = useNavigate()
 
@@ -97,28 +97,3 @@ const UsedCreate = () => {
         </div>
     )
 }
-export default UsedCreate;
-
-
-
-
-
-
-
-
-
-
-//form
-{/* <form>
-    <select value={category} onChange={e => setCategory(e.target.value)}>
-        <option value="">카테고리 선택</option>
-        <option value="4">벼룩해요</option>
-        <option value="5">드림해요</option>
-        <option value="6">구해요</option>
-        <option value="7">공구해요</option>
-    </select>
-    <input value={title} onChange={e => setTitle(e.target.value)} placeholder="제목" />
-    <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="내용" />
-    <input value={price} onChange={e => setPrice(e.target.value)} placeholder="가격" />
-    <button onClick={handleCreate}>등록</button>
-</form> */}

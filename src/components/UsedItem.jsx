@@ -1,12 +1,14 @@
 import { supabase } from "../supabase/supabase";
+import { Link } from "react-router-dom";
 // import '../css/used.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Container, Row, Col, Card, Spinner, Alert, Carousel, Button, Badge } from 'react-bootstrap';
 
-const UsedItem = ({ used }) => {
+export function UsedItem({ used }){
 
     return (
+        <Link to={`/trade/${used.id}`} className="text-decoration-none">
         <Container className="mt-3">
             <Card className="rounded-4 p-3">
                 <Row className="gy-4 align-items-center">  {/* 세로 가운데 정렬 */}
@@ -37,6 +39,7 @@ const UsedItem = ({ used }) => {
                 </Row>
             </Card>
         </Container>
+        </Link>
     );
 }
 export default UsedItem;

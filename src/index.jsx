@@ -17,7 +17,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { UsedSell } from './components/UsedSell';
 import { UsedShare } from './components/UsedShare';
-import UsedCreate from './components/UsedCreate';
+import { UsedCreate } from './components/UsedCreate';
+import { UsedDetail } from './components/UsedDetail';
 
 
 function Home() {
@@ -43,6 +44,8 @@ function App() {
             <Route path='/trade/sell' element={<UsedSell />} />
             <Route path='/trade/share' element={<UsedShare />} />
             <Route path='/trade/write' element={<UsedCreate />} />
+            {/* :id: 파라미터 */}
+            <Route path="/trade/:id" element={<UsedDetail />} />
             <Route path='/trade' element={<Trade />} />
             <Route path="/product/:id" element={<Product />} />
           </Routes>

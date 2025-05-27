@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from "../supabase/supabase";
 //import { Product } from './Product';
-import UsedItem from './UsedItem';
+import { UsedItem } from './UsedItem';
 
 
 export function UsedSell() {
