@@ -8,32 +8,43 @@ import { Layout } from './components/layout';
 import { Login } from './components/login';
 import { LoginRedirect } from './components/login.redirect'
 import { TestPage } from './components/testpage';
-import { Trade } from './components/Trade'
+
+import { Trade } from './components/Trade';
+//import { Gonggu } from './components/Gonggu';
+import { Product } from './components/Product';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { UsedSell } from './components/UsedSell';
-import UsedCreate from './components/UsedCreate';
 import { UsedShare } from './components/UsedShare';
+import UsedCreate from './components/UsedCreate';
+
 
 function Home() {
-  return <p></p>;
+
+  return (
+    <>
+      <div>메인 페이지</div>
+    </>
+  );
 }
 
 function App() {
-
   return (
     <BrowserRouter>
-      {/* 리덕스 사용 */}
       <ReduxProvider store={redux}>
-        {/* Layout 컴포넌트 안에 <Routes> </Routes> 내용들이 */}
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/login/redirect' element={<LoginRedirect />} />
-            <Route path='/test' element={<Home />} />
+            <Route path='/test' element={<TestPage />} />
+            <Route path='/trade/gonggu' element={<Trade />} />
+            <Route path='/trade/sell' element={<UsedSell />} />
+            <Route path='/trade/share' element={<UsedShare />} />
+            <Route path='/trade/write' element={<UsedCreate />} />
             <Route path='/trade' element={<Trade />} />
-            <Route path='/거래/벼룩해요' element={<UsedSell />} />
-            <Route path='/거래/드림해요' element={<UsedShare />} />
-            <Route path='/거래/글작성' element={<UsedCreate />} />
+            <Route path="/product/:id" element={<Product />} />
           </Routes>
         </Layout>
       </ReduxProvider>
@@ -47,4 +58,3 @@ root.render(
   <App />
   // </React.StrictMode>
 );
-

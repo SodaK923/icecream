@@ -11,9 +11,10 @@ export function UsedShare() {
         const fetchPosts = async () => {
             let { data, error } = await supabase
                 .from('trades')
-                .select('*,categories(name)')
-                .eq('category', 5)
-                .eq('super_category', 3);
+                .select('*,categories(name), users(name)')
+                .eq('category_id', 5)
+                .eq('super_category_id', 3)
+                .order('create_date', { ascending: false });
             if (error) {
                 console.log("error: ", error);
                 console.log("data: ", data);
