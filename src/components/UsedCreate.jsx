@@ -6,7 +6,7 @@ import { getUser } from '../utils/getUser';
 import { useUserTable } from "../hooks/useUserTable";
 import { useRegion } from "../hooks/useRegion";
 
-export function UsedCreate(){
+export function UsedCreate() {
     const now = new Date().toISOString();
     const navigate = useNavigate()
 
@@ -22,21 +22,26 @@ export function UsedCreate(){
     const [fileCount, setFileCount] = useState(0);
 
     // useUserTable 훅
-    const { info: userInfo, loading, error }=useUserTable();
+    const { info: userInfo, loading, error } = useUserTable();
 
     const { city, district } = useRegion();
     const location = `${city} ${district}`;
 
     // getUser
-    useEffect(()=>{
-        (async ()=>{
-            const {user} =await getUser();
-            if(!user){
-                alert('로그인해야 글을 쓸 수 있습니다.');
+    useEffect(() => {
+        (async () => {
+            const { user } = await getUser();
+            if (!user) {
+                alert('로그인해야 글작성이 가능합니다.');
                 navigate('/login');
             }
         })();
     }, []);
+
+    useEffect(() => {
+        if (category === "5") setPrice("");
+    }, [category]);
+
 
 
     // fileCount: 사용자가 < input type = "file" multiple > 에서 고른 파일의 개수
@@ -56,6 +61,16 @@ export function UsedCreate(){
 
     const handleCreate = async (e) => {
         e.preventDefault();
+
+        // if (loading) {
+        //     alert("유저 정보를 불러오는 중입니다. 잠시만 기다려 주세요.");
+        //     return;
+        // }
+        if (!userInfo) {
+            alert("로그인해야 글작성이 가능합니다.");
+            navigate('/login');
+            return;
+        }
 
         const { data, error } = await supabase
             .from('trades')
@@ -105,7 +120,12 @@ export function UsedCreate(){
                 </select>
                 <input value={title} onChange={e => setTitle(e.target.value)} placeholder="제목" />
                 <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="내용" />
-                <input value={price} onChange={e => setPrice(e.target.value)} placeholder="가격" />
+                <input
+                    value={price}
+                    onChange={e => setPrice(e.target.value)}
+                    placeholder={category === "5" ? "나눔" : "가격"}
+                    disabled={category === "5"}
+                />
                 <input type="file" multiple accept="image/*" onChange={handleFileChange} />
                 {/* 사용자가 선택한 이미지와 업로드된 이미지 개수가 같아야함 */}
                 {fileCount !== images.length && (
