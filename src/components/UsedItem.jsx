@@ -23,8 +23,9 @@ export function UsedItem({ used }){
                     </Col>
                     {/* 오른쪽: 글씨 */}
                     <Col md={10} xs={12}>
+                        <p className="text-primary mb-1">{used.categories?.name} | {used.location}</p>
+                        {/* <p className="text-muted mb-1">{used.location}</p> */}
                         <p className="text-muted mb-1">글쓴이: {used.users.name}</p>
-                        <p className="text-muted mb-1">{used.categories?.name}</p>
                         <h4 className="fw-bold mb-1 mt-2">{used.title}</h4>
                         <p className="mb-2">{used.content}</p>
                         <p className="mb-0">

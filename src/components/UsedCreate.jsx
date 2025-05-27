@@ -4,6 +4,7 @@ import { supabase } from "../supabase/supabase";
 import { useImage } from "../hooks/useImage";
 import { getUser } from '../utils/getUser';
 import { useUserTable } from "../hooks/useUserTable";
+import { useRegion } from "../hooks/useRegion";
 
 export function UsedCreate(){
     const now = new Date().toISOString();
@@ -23,6 +24,10 @@ export function UsedCreate(){
     // useUserTable 훅
     const { info: userInfo, loading, error }=useUserTable();
 
+    const { city, district } = useRegion();
+    const location = `${city} ${district}`;
+
+    // getUser
     useEffect(()=>{
         (async ()=>{
             const {user} =await getUser();
@@ -32,8 +37,6 @@ export function UsedCreate(){
             }
         })();
     }, []);
-
-
 
 
     // fileCount: 사용자가 < input type = "file" multiple > 에서 고른 파일의 개수
@@ -61,7 +64,7 @@ export function UsedCreate(){
                 title: title,
                 content: content,
                 price: Number(price),
-                location: null,
+                location: location,
                 main_img: images[0] ? getImages(images[0]) : null,
                 detail_img1: images[1] ? getImages(images[1]) : null,
                 detail_img2: images[2] ? getImages(images[2]) : null,
@@ -84,7 +87,7 @@ export function UsedCreate(){
             console.log('error', error);
         } if (data) {
             //console.log(data)
-            // 글작성한 카테고리로 자동 이동하게 하기
+            // todo: 글작성한 카테고리로 자동 이동하게 하기
             navigate('/trade');
         }
     }
