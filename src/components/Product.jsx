@@ -3,10 +3,16 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../supabase/supabase';
 import { Container, Row, Col, Card, Spinner, Alert, Carousel, Button, Badge } from 'react-bootstrap';
 import { useUserTable } from "../hooks/useUserTable";
+//import { Comments } from './Comment';
 
 export function Product() {
-  const user = useUserTable();
-  const currentUserId = user?.info?.id ?? null;
+  // const user = useUserTable();
+  // const currentUserId = user?.info?.id ?? null;
+
+  // useUserTable 훅 호출하여 현재 로그인된 사용자 정보 가져옴.
+  // info: 사용자 정보, loading: 로딩 상태 
+  const { info: userInfo, loading: userLoading } = useUserTable();
+
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [productUser, setProductUser] = useState(null);
@@ -14,6 +20,7 @@ export function Product() {
   const [error, setError] = useState(null);
   const [isLiked, setIsLiked] = useState(false); // 좋아요 눌렀는지 여부
   const [isLiking, setIsLiking] = useState(false); // 처리 중 여부
+  const [likesCount, setLikesCount] = useState(0); // 좋아요수
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -33,37 +40,51 @@ export function Product() {
 
         setProduct(productData);
 
+        // 처음 상품 로드할 때 좋아요 수 조회 (++)
+        const { count, error: likeCountError } = await supabase
+          .from('likes')
+          .select('*', { count: 'exact', head: true })
+          .eq('category_id', productData.category_id)
+          .eq('table_id', productData.id);
+
+        if (!likeCountError) {
+          setLikesCount(count);
+        } else {
+          console.error('좋아요 수 불러오기 실패', likeCountError);
+        }
+
         await supabase.rpc('increment_view_count', { trade_id: parseInt(id) });
 
-        if (productData.users) {
+        // 게시물 작성자 가져오기?
+        if (productData.user_id) {
           const { data: userData, error: userError } = await supabase
             .from('users')
             .select('*')
-            .eq('id', productData.users)
+            .eq('id', productData.user_id)
             .single();
 
           if (!userError) {
             setProductUser(userData);
           }
         }
-/*
-        // 좋아요 상태 체크
+
+        // 사용자 좋아요 상태 체크
         const { data: likedData } = await supabase
           .from('likes')
           .select('id')
-          .eq('type', productData.category)
-          .eq('type_id', productData.id)
-          .eq('users', currentUserId);
+          .eq('category_id', productData.category_id)
+          .eq('table_id', productData.id)
+          .eq('user_id', userInfo.id);
 
         setIsLiked(likedData.length > 0);
-        */
+
       } catch (err) {
         console.error('Unexpected error:', err);
         setError('데이터를 불러오는 도중 오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
-        
+
     };
 
     fetchProduct(); // 반드시 호출 필요!
@@ -76,6 +97,25 @@ export function Product() {
 
   const detailImages = [product.detail_img1, product.detail_img2, product.detail_img3, product.detail_img4].filter(Boolean);
 
+  // 좋아요 수 갱신 함수
+  const updateLikeCount = async () => {
+    try {
+      const { count, error: likeCountError } = await supabase
+        .from('likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('category_id', product.category_id)
+        .eq('table_id', product.id);
+
+      if (!likeCountError) {
+        setLikesCount(count);  // 좋아요 수 갱신
+      } else {
+        console.error('좋아요 수 불러오기 실패', likeCountError);
+      }
+    } catch (error) {
+      console.error('좋아요 수 갱신 실패:', error);
+    }
+  };
+
   const handleLikeToggle = async () => {
     if (!product) return;
     setIsLiking(true);
@@ -86,35 +126,27 @@ export function Product() {
         await supabase
           .from('likes')
           .delete()
-          .eq('type', product.category)
-          .eq('type_id', product.id)
-          .eq('users', currentUserId);
+          .eq('category_id', product.category_id)
+          .eq('table_id', product.id)
+          .eq('user_id', userInfo.id);
 
-        const { data: updatedProduct } = await supabase
-          .from('trades')
-          .update({ likes: product.likes - 1 })
-          .eq('id', product.id)
-          .select()
-          .single();
-
-        setProduct(updatedProduct);
         setIsLiked(false);
       } else {
         // 좋아요 추가
         await supabase
           .from('likes')
-          .insert({ type: product.category, type_id: product.id, users: currentUserId });
+          .insert({
+            category_id: product.category_id,
+            table_id: product.id,
+            user_id: userInfo.id
+          });
 
-        const { data: updatedProduct } = await supabase
-          .from('trades')
-          .update({ likes: product.likes + 1 })
-          .eq('id', product.id)
-          .select()
-          .single();
-
-        setProduct(updatedProduct);
         setIsLiked(true);
       }
+
+      // 좋아요 상태 변경 후 좋아요 수 갱신
+      await updateLikeCount();
+
     } catch (error) {
       console.error('좋아요 처리 실패:', error);
       alert('좋아요 처리 중 오류가 발생했습니다.');
@@ -205,7 +237,7 @@ export function Product() {
                   </Col>
                   <Col xs={6}>
                     <p className="mb-1"><i className="bi bi-heart-fill text-danger"></i> 좋아요</p>
-                    <p className="fw-semibold">{product.likes}</p>
+                    <p className="fw-semibold">{likesCount}</p>
                     <Button
                       variant={isLiked ? 'danger' : 'outline-danger'}
                       size="sm"
@@ -231,6 +263,8 @@ export function Product() {
             </Col>
           </Row>
         </Card>
+        {/* 댓글 컴포넌트
+         <Comments productId={product.id} /> */}
       </Container>
     </>
   );

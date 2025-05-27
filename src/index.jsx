@@ -43,11 +43,12 @@ function App() {
             <Route path='/trade/gonggu' element={<Trade />} />
             <Route path='/trade/sell' element={<UsedSell />} />
             <Route path='/trade/share' element={<UsedShare />} />
-            <Route path='/trade/write' element={<UsedCreate />} />
+            <Route path='/trade/:id' element={<UsedCreate />} />
             {/* :id: 파라미터 */}
             <Route path="/trade/:id" element={<UsedDetail />} />
             <Route path='/trade' element={<Trade />} />
             <Route path="/product/:id" element={<Product />} />
+            <Route path="/trade/:id/:item" element={<UsedDetail />} />
           </Routes>
         </Layout>
       </ReduxProvider>

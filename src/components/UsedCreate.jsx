@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/supabase";
 import { useImage } from "../hooks/useImage";
-//import { getUser } from '../utils/getUser';
+import { getUser } from '../utils/getUser';
+import { useUserTable } from "../hooks/useUserTable";
 
 export function UsedCreate(){
     const now = new Date().toISOString();
@@ -18,6 +19,22 @@ export function UsedCreate(){
     // useImage 훅
     const { images, setImages, getImages } = useImage();
     const [fileCount, setFileCount] = useState(0);
+
+    // useUserTable 훅
+    const { info: userInfo, loading, error }=useUserTable();
+
+    useEffect(()=>{
+        (async ()=>{
+            const {user} =await getUser();
+            if(!user){
+                alert('로그인해야 글을 쓸 수 있습니다.');
+                navigate('/login');
+            }
+        })();
+    }, []);
+
+
+
 
     // fileCount: 사용자가 < input type = "file" multiple > 에서 고른 파일의 개수
     // images.length: 실제로 서버에 업로드 끝난 이미지 개수(useImage 훅에서 관리)
@@ -40,7 +57,7 @@ export function UsedCreate(){
         const { data, error } = await supabase
             .from('trades')
             .insert([{
-                user_id: '8468e4e0-851d-4860-8ad1-d1e9eb2b518c',
+                user_id: userInfo.id,
                 title: title,
                 content: content,
                 price: Number(price),
@@ -66,12 +83,12 @@ export function UsedCreate(){
         if (error) {
             console.log('error', error);
         } if (data) {
-            console.log(data)
+            //console.log(data)
             // 글작성한 카테고리로 자동 이동하게 하기
             navigate('/trade');
         }
     }
-    console.log(images);
+    //console.log(images);
 
     return (
         <div>
@@ -92,7 +109,8 @@ export function UsedCreate(){
                     <div>이미지 업로드 중입니다...</div>
                 )}
                 {/* 파일 개수가 맞을 때까지 등록버튼 꺼짐 */}
-                <button onClick={handleCreate} disabled={fileCount !== images.length || images.length === 0}>등록</button>
+                {/* <button onClick={handleCreate} disabled={fileCount !== images.length || images.length === 0}>등록</button> */}
+                <button onClick={handleCreate}>등록</button>
             </form>
         </div>
     )

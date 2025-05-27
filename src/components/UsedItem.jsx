@@ -8,7 +8,7 @@ import { Container, Row, Col, Card, Spinner, Alert, Carousel, Button, Badge } fr
 export function UsedItem({ used }){
 
     return (
-        <Link to={`/trade/${used.id}`} className="text-decoration-none">
+        <Link to={`${used.id}`} className="text-decoration-none">
         <Container className="mt-3">
             <Card className="rounded-4 p-3">
                 <Row className="gy-4 align-items-center">  {/* 세로 가운데 정렬 */}
