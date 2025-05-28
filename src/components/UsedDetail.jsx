@@ -9,10 +9,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 export function UsedDetail() {
     const { item } = useParams();
-    const [detail, setDetail] = useState(null);
-    //const { info: userInfo } = useUserTable();
     const navigate = useNavigate();
 
+    const [detail, setDetail] = useState(null);
+    //const { info: userInfo } = useUserTable();
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -31,21 +31,49 @@ export function UsedDetail() {
         fetchDetails();
     }, [item]);
 
-    const deleteDetails = async () =>{
-        const {data, error} = await supabase
-        .from('trades')
-        .delete()
-        .eq('id', item)
-        .select();
-        if(error){
+
+    // 조회수 증가
+    useEffect(() => {
+            console.log(item);
+        const increaseView = async () => {
+            const { data, error } = await supabase
+                .from('trades')
+                .select('cnt')
+                .eq('id', item);
+            if (error) {
+                alert('오류가 발생했습니다');
+                console.log('increaseView error: ', error);
+                return;
+            }
+            if (data) {
+                await supabase
+                    .from('trades')
+                    .update({ cnt: data[0].cnt + 1 })
+                    .eq('id', item);
+            }
+        }
+        increaseView();
+    }, [item]);
+
+
+    // 글 삭제
+    const deleteDetails = async () => {
+        const { data, error } = await supabase
+            .from('trades')
+            .delete()
+            .eq('id', item)
+            .select();
+        if (error) {
             alert('삭제에 실패했습니다.');
             console.log('delete error', error);
         }
-        if(data){
+        if (data) {
             alert('게시글이 삭제되었습니다.');
             navigate('/trade');
         }
     }
+
+    // todo: 글 수정
 
     if (!detail) return <div>로딩중</div>;
 
@@ -53,7 +81,7 @@ export function UsedDetail() {
 
 
     const getDateDiff = (date) => {
-        const created=new Date(date);
+        const created = new Date(date);
         created.setHours(created.getHours() + 9);
         const now = new Date();
         const diffMs = now - created; // 밀리초 차이
@@ -96,10 +124,11 @@ export function UsedDetail() {
                 </Carousel>
             </div>
             <div>
+                <div>{getDateDiff(detail.create_date)}</div>
                 <div>제목: {detail.title}</div>
                 <div>내용: {detail.content}</div>
-                <div>작성자: {detail.users.name}</div>
-                <div>{getDateDiff(detail.create_date)}</div>
+                <div>작성자: {detail.users?.name ?? '알 수 없음'}</div>
+                <div>조회수: {detail?.cnt ?? 0}</div>
                 <div>
                     {detail.category_id === 5 ? (<div>나눔</div>) : (<div>{Number(detail.price).toLocaleString()}원</div>)}
                 </div>

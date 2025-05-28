@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from "../supabase/supabase";
 //import { Product } from './Product';
@@ -7,6 +7,7 @@ import { UsedItem } from './UsedItem';
 
 export function UsedSell() {
     const [posts, setPosts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -29,11 +30,13 @@ export function UsedSell() {
 
     if(!posts) return <div>로딩중</div>;
 
+    const handleCreate=()=>{
+        navigate('/trade/write');
+    }
+
     return (
         <div>
-            <div>
-                <Link to='/trade/write'>글작성</Link>
-            </div>
+            <button onClick={handleCreate} style={{cursor: 'pointer'}}>글작성</button>
             {posts.map((used) => (
                 <UsedItem key={used.id} used={used}>
                     {/* <img src={used.main_img} style={{ width: "100px" }} /> */}
