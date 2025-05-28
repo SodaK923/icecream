@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/supabase";
 import { useImage } from "../hooks/useImage";
-import { getUser } from '../utils/getUser';
+//import { getUser } from '../utils/getUser';
 import { useUserTable } from "../hooks/useUserTable";
 import { useRegion } from "../hooks/useRegion";
 
@@ -28,16 +28,26 @@ export function UsedCreate() {
     const location = `${city} ${district}`;
 
     // getUser
-    useEffect(() => {
-        (async () => {
-            const { user } = await getUser();
-            if (!user) {
-                alert('로그인해야 글작성이 가능합니다.');
-                navigate('/login');
-            }
-        })();
-    }, []);
+    // useEffect(() => {
+    //     (async () => {
+    //         const { user } = await getUser();
+    //         if (!user) {
+    //             alert('로그인해야 글작성이 가능합니다.');
+    //             navigate('/login');
+    //         }
+    //     })();
+    // }, []);
 
+    useEffect(() => {
+        console.log("userInfo:", userInfo, "loading:", loading);
+        if (!userInfo && !loading) {
+            alert('로그인해야 글작성이 가능합니다.');
+            navigate('/login');
+        }
+    }, [loading, userInfo]);
+
+
+    // 드림해요-> 가격 내용 비움
     useEffect(() => {
         if (category === "5") setPrice("");
     }, [category]);
@@ -49,6 +59,7 @@ export function UsedCreate() {
     // 이미지 업로드 개수 제한 함수
     const handleFileChange = (e) => {
         const files = e.target.files;
+        console.log(files);
         if (files.length > 5) {
             alert("사진은 최대 5장까지만 업로드할 수 있습니다.");
             e.target.value = ""; // 선택 취소
@@ -70,7 +81,23 @@ export function UsedCreate() {
             alert("로그인해야 글작성이 가능합니다.");
             navigate('/login');
             return;
+
         }
+
+        if (!category) {
+            alert("카테고리를 선택해주세요.");
+            return;
+        }
+        if (!title || !content) {
+            alert("제목과 내용을 모두 작성해주세요.");
+            return;
+        }
+        if (category !== "5" && !price) { // '나눔' 아니면 가격 필요
+            alert("가격을 입력해주세요.");
+            return;
+        }
+
+
 
         const { data, error } = await supabase
             .from('trades')
@@ -107,6 +134,7 @@ export function UsedCreate() {
         }
     }
     //console.log(images);
+
 
     return (
         <div>
