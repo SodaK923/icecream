@@ -27,6 +27,8 @@ export function UsedSell() {
         fetchPosts();
     }, []);
 
+    if(!posts) return <div>로딩중</div>;
+
     return (
         <div>
             <div>

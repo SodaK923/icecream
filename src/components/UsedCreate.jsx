@@ -8,7 +8,7 @@ import { useRegion } from "../hooks/useRegion";
 
 export function UsedCreate() {
     const now = new Date().toISOString();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
