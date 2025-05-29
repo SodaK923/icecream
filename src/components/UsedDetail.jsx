@@ -14,6 +14,7 @@ export function UsedDetail() {
     const [detail, setDetail] = useState(null);
     //const { info: userInfo } = useUserTable();
 
+    // 아이템 가져옴
     useEffect(() => {
         const fetchDetails = async () => {
             const { data, error } = await supabase
@@ -34,22 +35,33 @@ export function UsedDetail() {
 
     // 조회수 증가
     useEffect(() => {
-            console.log(item);
+        if(!item) return;
         const increaseView = async () => {
             const { data, error } = await supabase
                 .from('trades')
                 .select('cnt')
-                .eq('id', item);
+                .eq('id', item)
+                .single();
             if (error) {
-                alert('오류가 발생했습니다');
                 console.log('increaseView error: ', error);
                 return;
             }
             if (data) {
+                // 조회수 증가
                 await supabase
                     .from('trades')
-                    .update({ cnt: data[0].cnt + 1 })
+                    .update({ cnt: data.cnt + 1 })
                     .eq('id', item);
+                
+                // 증가된 조회수 반영
+                const {data: updateData} = await supabase
+                .from('trades')
+                .select('*')
+                .eq('id', item)
+                .single()
+                if(updateData){
+                    setDetail(updateData);
+                }
             }
         }
         increaseView();
@@ -74,12 +86,16 @@ export function UsedDetail() {
     }
 
     // todo: 글 수정
+    const handleUpdate=()=>{
+        navigate('/trade/update');
+    }
 
     if (!detail) return <div>로딩중</div>;
 
     const images = [detail.main_img, detail.detail_img1, detail.detail_img2, detail.detail_img3, detail.detail_img4].filter(Boolean);
 
 
+    // 날짜 계산
     const getDateDiff = (date) => {
         const created = new Date(date);
         created.setHours(created.getHours() + 9);
@@ -133,7 +149,7 @@ export function UsedDetail() {
                     {detail.category_id === 5 ? (<div>나눔</div>) : (<div>{Number(detail.price).toLocaleString()}원</div>)}
                 </div>
             </div>
-            <button>글수정</button>
+            <button onClick={handleUpdate}>글수정</button>
             <button onClick={deleteDetails}>삭제</button>
         </div>
     );

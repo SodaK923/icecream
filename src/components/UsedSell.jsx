@@ -11,7 +11,7 @@ export function UsedSell() {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            let { data, error } = await supabase
+            const { data, error } = await supabase
                 .from('trades')
                 .select('*,categories(name), users(name)')
                 .eq('category_id', 4)

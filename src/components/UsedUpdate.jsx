@@ -6,13 +6,17 @@ import { useImage } from "../hooks/useImage";
 import { useUserTable } from "../hooks/useUserTable";
 import { useRegion } from "../hooks/useRegion";
 
-export function UsedCreate() {
+export function UsedUpdate() {
     const now = new Date().toISOString();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [price, setPrice] = useState("");
+    const [price, setPrice] = useState({
+
+    });
+    // 기존 내용 불러옴
+    const [form, setForm]=useState("");
 
     // type-> 4: 벼룩해요 5: 드림해요 6. 구해요 7. 공구해요
     const [category, setCategory] = useState("");
@@ -27,16 +31,6 @@ export function UsedCreate() {
     const { city, district } = useRegion();
     const location = `${city} ${district}`;
 
-    // getUser
-    // useEffect(() => {
-    //     (async () => {
-    //         const { user } = await getUser();
-    //         if (!user) {
-    //             alert('로그인해야 글작성이 가능합니다.');
-    //             navigate('/login');
-    //         }
-    //     })();
-    // }, []);
 
     useEffect(() => {
         console.log("userInfo:", userInfo, "loading:", loading);
@@ -97,6 +91,26 @@ export function UsedCreate() {
             return;
         }
 
+        
+    // 기존 내용 불러옴
+    useEffect(() => {
+        const fetchForm = async () => {
+            const { data, error } = await supabase
+                .from('trades')
+                .select('*')
+                .eq('category_id', 4)
+                .eq('super_category_id', 3)
+                .order('create_date', { ascending: false });
+            if (error) {
+                console.log("error: ", error);
+                console.log("data: ", data);
+            }
+            if(data) {
+                setForm(data);
+            }
+        }
+        fetchForm();
+    }, []);
 
 
         const { data, error } = await supabase

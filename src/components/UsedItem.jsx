@@ -44,6 +44,7 @@ export function UsedItem({ used }) {
                         </Col>
                         {/* 오른쪽: 글씨 */}
                         <Col md={10} xs={12}>
+                            <div>{used.cnt}</div>
                             <p className="text-primary mb-1">{used.categories?.name} | {used.location}</p>
                             <div>{getDateDiff(used.create_date)}</div>
                             {/* <p className="text-muted mb-1">{used.location}</p> */}
