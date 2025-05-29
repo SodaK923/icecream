@@ -60,7 +60,7 @@ export function UsedUpdate() {
                 setTitle(data.title)
                 setContent(data.content)
                 setPrice(data.price),
-                    setCategory(String(data.category_id))
+                setCategory(String(data.category_id))
             }
         }
         fetchForm();

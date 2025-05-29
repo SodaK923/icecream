@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabase/supabase";
 import { Carousel } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
+import { useUserTable } from "../hooks/useUserTable";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -12,7 +13,7 @@ export function UsedDetail() {
     const navigate = useNavigate();
 
     const [detail, setDetail] = useState(null);
-    //const { info: userInfo } = useUserTable();
+    const { info: userInfo } = useUserTable();
 
     // 아이템 가져옴
     useEffect(() => {
@@ -35,7 +36,7 @@ export function UsedDetail() {
 
     // 조회수 증가
     useEffect(() => {
-        if(!item) return;
+        if (!item) return;
         const increaseView = async () => {
             const { data, error } = await supabase
                 .from('trades')
@@ -52,14 +53,14 @@ export function UsedDetail() {
                     .from('trades')
                     .update({ cnt: data.cnt + 1 })
                     .eq('id', item);
-                
+
                 // 증가된 조회수 반영
-                const {data: updateData} = await supabase
-                .from('trades')
-                .select('*, users(name)')
-                .eq('id', item)
-                .single()
-                if(updateData){
+                const { data: updateData } = await supabase
+                    .from('trades')
+                    .select('*, users(name)')
+                    .eq('id', item)
+                    .single()
+                if (updateData) {
                     setDetail(updateData);
                 }
             }
@@ -71,7 +72,7 @@ export function UsedDetail() {
     // 글 삭제
     const deleteDetails = async () => {
         // 취소(false)를 눌러야 true가 되므로 !confirm
-        if(!confirm('게시글을 삭제할까요?')) {
+        if (!confirm('게시글을 삭제할까요?')) {
             return;
         }
         const { data, error } = await supabase
@@ -90,7 +91,7 @@ export function UsedDetail() {
     }
 
     // todo: 글 수정
-    const handleUpdate=()=>{
+    const handleUpdate = () => {
         navigate('update');
     }
 
@@ -153,8 +154,13 @@ export function UsedDetail() {
                     {detail.category_id === 5 ? (<div>나눔</div>) : (<div>{Number(detail.price).toLocaleString()}원</div>)}
                 </div>
             </div>
-            <button onClick={handleUpdate}>글수정</button>
-            <button onClick={deleteDetails}>삭제</button>
+            {userInfo && userInfo.id === detail.user_id&&(
+                <div>
+                    <button onClick={handleUpdate}>글수정</button>
+                    <button onClick={deleteDetails}>삭제</button>
+                </div>
+            )}
+
         </div>
     );
 } 
