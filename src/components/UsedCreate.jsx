@@ -24,6 +24,7 @@ export function UsedCreate() {
     // useUserTable 훅
     const { info: userInfo, loading, error } = useUserTable();
 
+    // 상세정보 테이블에서 가져올수도..
     const { city, district } = useRegion();
     const location = `${city} ${district}`;
 
@@ -103,10 +104,10 @@ export function UsedCreate() {
             .from('trades')
             .insert([{
                 user_id: userInfo.id,
-                title: title,
-                content: content,
+                title,
+                content,
                 price: Number(price),
-                location: location,
+                location,
                 main_img: images[0] ? getImages(images[0]) : null,
                 detail_img1: images[1] ? getImages(images[1]) : null,
                 detail_img2: images[2] ? getImages(images[2]) : null,
@@ -115,7 +116,7 @@ export function UsedCreate() {
                 category_id: Number(category),
                 super_category_id: 3,
                 create_date: now,
-                update_date: now,
+                update_date: now, //null로 햇더니 오류남
                 cnt: 0,
                 // 공구에 들어가는 내용->null
                 sales_begin: null,

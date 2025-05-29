@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../supabase/supabase";
 import { useImage } from "../hooks/useImage";
 //import { getUser } from '../utils/getUser';
@@ -9,14 +9,11 @@ import { useRegion } from "../hooks/useRegion";
 export function UsedUpdate() {
     const now = new Date().toISOString();
     const navigate = useNavigate();
+    const { item } = useParams();
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [price, setPrice] = useState({
-
-    });
-    // 기존 내용 불러옴
-    const [form, setForm]=useState("");
+    const [price, setPrice] = useState("");
 
     // type-> 4: 벼룩해요 5: 드림해요 6. 구해요 7. 공구해요
     const [category, setCategory] = useState("");
@@ -47,6 +44,29 @@ export function UsedUpdate() {
     }, [category]);
 
 
+    // 기존 내용 불러옴
+    useEffect(() => {
+        const fetchForm = async () => {
+            const { data, error } = await supabase
+                .from('trades')
+                .select('*, categories(name)')
+                .eq('id', item)
+                .single();
+            if (error) {
+                console.log("error: ", error);
+                console.log("data: ", data);
+            }
+            if (data) {
+                setTitle(data.title)
+                setContent(data.content)
+                setPrice(data.price),
+                    setCategory(String(data.category_id))
+            }
+        }
+        fetchForm();
+    }, [item]);
+
+
 
     // fileCount: 사용자가 < input type = "file" multiple > 에서 고른 파일의 개수
     // images.length: 실제로 서버에 업로드 끝난 이미지 개수(useImage 훅에서 관리)
@@ -64,7 +84,7 @@ export function UsedUpdate() {
     }
 
 
-    const handleCreate = async (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
 
         // if (loading) {
@@ -91,54 +111,23 @@ export function UsedUpdate() {
             return;
         }
 
-        
-    // 기존 내용 불러옴
-    useEffect(() => {
-        const fetchForm = async () => {
-            const { data, error } = await supabase
-                .from('trades')
-                .select('*')
-                .eq('category_id', 4)
-                .eq('super_category_id', 3)
-                .order('create_date', { ascending: false });
-            if (error) {
-                console.log("error: ", error);
-                console.log("data: ", data);
-            }
-            if(data) {
-                setForm(data);
-            }
-        }
-        fetchForm();
-    }, []);
-
-
         const { data, error } = await supabase
             .from('trades')
-            .insert([{
-                user_id: userInfo.id,
-                title: title,
-                content: content,
-                price: Number(price),
-                location: location,
+            .update({
+                title,
+                content,
+                price: category === "5" ? 0 : Number(price),
+                category_id: Number(category),
                 main_img: images[0] ? getImages(images[0]) : null,
                 detail_img1: images[1] ? getImages(images[1]) : null,
                 detail_img2: images[2] ? getImages(images[2]) : null,
                 detail_img3: images[3] ? getImages(images[3]) : null,
-                detail_img4: images[4] ? getImages(images[4]) : null,
-                category_id: Number(category),
-                super_category_id: 3,
-                create_date: now,
-                update_date: now,
-                cnt: 0,
-                // 공구에 들어가는 내용->null
-                sales_begin: null,
-                sales_end: null,
-                limit_type: null,
-                limit: null,
-                state: null
-            }])
-            .select()
+                detail_img4: images[4] ? getImages(images[4]) : null
+                //update_date: now,
+                //location
+            })
+            .eq('id', item)
+            .select();
         if (error) {
             console.log('error', error);
         } if (data) {
@@ -147,7 +136,6 @@ export function UsedUpdate() {
             navigate('/trade');
         }
     }
-    //console.log(images);
 
 
     return (
@@ -163,7 +151,7 @@ export function UsedUpdate() {
                 <input value={title} onChange={e => setTitle(e.target.value)} placeholder="제목" />
                 <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="내용" />
                 <input
-                    value={price}
+                    value={category === "5" ? 0 : price}
                     onChange={e => setPrice(e.target.value)}
                     placeholder={category === "5" ? "나눔" : "가격"}
                     disabled={category === "5"}
@@ -175,7 +163,7 @@ export function UsedUpdate() {
                 )}
                 {/* 파일 개수가 맞을 때까지 등록버튼 꺼짐 */}
                 {/* <button onClick={handleCreate} disabled={fileCount !== images.length || images.length === 0}>등록</button> */}
-                <button onClick={handleCreate}>등록</button>
+                <button onClick={handleUpdate}>수정</button>
             </form>
         </div>
     )

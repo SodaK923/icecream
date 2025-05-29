@@ -56,7 +56,7 @@ export function UsedDetail() {
                 // 증가된 조회수 반영
                 const {data: updateData} = await supabase
                 .from('trades')
-                .select('*')
+                .select('*, users(name)')
                 .eq('id', item)
                 .single()
                 if(updateData){
@@ -70,6 +70,10 @@ export function UsedDetail() {
 
     // 글 삭제
     const deleteDetails = async () => {
+        // 취소(false)를 눌러야 true가 되므로 !confirm
+        if(!confirm('게시글을 삭제할까요?')) {
+            return;
+        }
         const { data, error } = await supabase
             .from('trades')
             .delete()
@@ -87,7 +91,7 @@ export function UsedDetail() {
 
     // todo: 글 수정
     const handleUpdate=()=>{
-        navigate('/trade/update');
+        navigate('update');
     }
 
     if (!detail) return <div>로딩중</div>;

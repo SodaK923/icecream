@@ -381,7 +381,7 @@
 }
 
 .mainLayout {
-    height: 100vh;
+    height: fit-content;
     min-height: calc( 100% - 60px );
     border: 1px solid red;
     flex: 1;
