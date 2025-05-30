@@ -63,15 +63,15 @@ export function UsedUpdate() {
                 setTitle(data.title)
                 setContent(data.content)
                 setPrice(data.price),
-                setCategory(String(data.category_id)),
-                // ↓↓↓ 기존 이미지들 배열로 만듦
-                setExPics([
-                    data.main_img,
-                    data.detail_img1,
-                    data.detail_img2,
-                    data.detail_img3,
-                    data.detail_img4
-                ].filter(Boolean)); // 비어있는 건 빼고
+                    setCategory(String(data.category_id)),
+                    // ↓↓↓ 기존 이미지들 배열로 만듦
+                    setExPics([
+                        data.main_img,
+                        data.detail_img1,
+                        data.detail_img2,
+                        data.detail_img3,
+                        data.detail_img4
+                    ].filter(Boolean)); // 비어있는 건 빼고
             }
         }
         fetchForm();
@@ -91,14 +91,20 @@ export function UsedUpdate() {
             return;
         }
         setFileCount(files.length);
-        if(files.length>0){
-        setExPics([]);
-        setImages(e); // 기존대로
+        if (files.length > 0) {
+            setExPics([]);
+            setImages(e); // 기존대로
         }
     }
 
     // 새로 업로드한 이미지가 있으면 새이미지 저장
-    const finalPics = images.length > 0 ? images : exPics;
+    const finalPics = (images.length > 0 ? images : exPics).filter(Boolean);
+
+    const getFinalUrl = (img) => {
+        if (!img) return null;
+        return img.startsWith("http") ? img : getImages(img);
+    };
+
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -129,11 +135,13 @@ export function UsedUpdate() {
                 content,
                 price: category === "5" ? 0 : Number(price),
                 category_id: Number(category),
-                main_img: getImages(finalPics[0]) || null,
-                detail_img1: getImages(finalPics[1]) || null,
-                detail_img2: getImages(finalPics[2]) || null,
-                detail_img3: getImages(finalPics[3]) || null,
-                detail_img4: getImages(finalPics[4]) || null
+                // 슈퍼베이스 경로 붙여줘야함
+                main_img: getFinalUrl(finalPics[0]),
+                detail_img1: getFinalUrl(finalPics[1]),
+                detail_img2: getFinalUrl(finalPics[2]),
+                detail_img3: getFinalUrl(finalPics[3]),
+                detail_img4: getFinalUrl(finalPics[4]),
+
                 //update_date: now,
                 //location
             })
