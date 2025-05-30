@@ -1,4 +1,5 @@
 import styles from "../css/layout.module.css"
+import logo from '../logo.png';
 import React, { useCallback } from 'react';
 import { useNavigate, useLocation, matchPath, useParams } from 'react-router-dom';
 import { FaBell } from "react-icons/fa6";
@@ -96,6 +97,8 @@ export function Layout({ children }) {
             <div className={styles.breakpoints}>
                 {/* 로고 이미지 */}
                 <img
+                    src={logo} alt="logo"
+                    style={{transform: 'rotate(305deg)'}}
                     className={styles.logo}
                     onClick={(e) => handleNavigate(e, '/')}
                 />
