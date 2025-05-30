@@ -14,6 +14,7 @@ export function UsedUpdate() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [price, setPrice] = useState("");
+    // 기존 사진
     const [exPics, setExPics] = useState([]);
 
 
@@ -62,15 +63,15 @@ export function UsedUpdate() {
                 setTitle(data.title)
                 setContent(data.content)
                 setPrice(data.price),
-                    setCategory(String(data.category_id)),
-                    // ↓↓↓ 기존 이미지들 배열로 만듦
-                    setExPics([
-                        data.main_img,
-                        data.detail_img1,
-                        data.detail_img2,
-                        data.detail_img3,
-                        data.detail_img4
-                    ].filter(Boolean)); // 비어있는 건 빼고
+                setCategory(String(data.category_id)),
+                // ↓↓↓ 기존 이미지들 배열로 만듦
+                setExPics([
+                    data.main_img,
+                    data.detail_img1,
+                    data.detail_img2,
+                    data.detail_img3,
+                    data.detail_img4
+                ].filter(Boolean)); // 비어있는 건 빼고
             }
         }
         fetchForm();
@@ -90,24 +91,22 @@ export function UsedUpdate() {
             return;
         }
         setFileCount(files.length);
+        if(files.length>0){
         setExPics([]);
         setImages(e); // 기존대로
+        }
     }
 
+    // 새로 업로드한 이미지가 있으면 새이미지 저장
     const finalPics = images.length > 0 ? images : exPics;
 
     const handleUpdate = async (e) => {
         e.preventDefault();
 
-        // if (loading) {
-        //     alert("유저 정보를 불러오는 중입니다. 잠시만 기다려 주세요.");
-        //     return;
-        // }
         if (!userInfo) {
             alert("로그인해야 글작성이 가능합니다.");
             navigate('/login');
             return;
-
         }
 
         if (!category) {
@@ -130,11 +129,11 @@ export function UsedUpdate() {
                 content,
                 price: category === "5" ? 0 : Number(price),
                 category_id: Number(category),
-                main_img: finalPics[0] || null,
-                detail_img1: finalPics[1] || null,
-                detail_img2: finalPics[2] || null,
-                detail_img3: finalPics[3] || null,
-                detail_img4: finalPics[4] || null
+                main_img: getImages(finalPics[0]) || null,
+                detail_img1: getImages(finalPics[1]) || null,
+                detail_img2: getImages(finalPics[2]) || null,
+                detail_img3: getImages(finalPics[3]) || null,
+                detail_img4: getImages(finalPics[4]) || null
                 //update_date: now,
                 //location
             })
@@ -187,11 +186,11 @@ export function UsedUpdate() {
                 </div>
 
                 {/* 업로드하는 사진 보여줌 */}
-                {/* <div>
+                <div>
                     {images.length > 0 && images.map((img, idx) => (
-                        <img key={idx} src={getImages(img)} alt={`이미지${idx + 1}`} style={{ width: 100, height: 100 }} />
+                        <img key={idx} src={getImages(img)} alt={`이미지${idx + 1}`} style={{ width: '100px' }} />
                     ))}
-                </div> */}
+                </div>
                 {/* 파일 개수가 맞을 때까지 등록버튼 꺼짐 */}
                 {/* <button onClick={handleCreate} disabled={fileCount !== images.length || images.length === 0}>등록</button> */}
                 <button onClick={handleUpdate}>수정</button>
