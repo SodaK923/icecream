@@ -14,6 +14,8 @@ export function UsedUpdate() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [price, setPrice] = useState("");
+    const [exPics, setExPics] = useState([]);
+
 
     // type-> 4: 벼룩해요 5: 드림해요 6. 구해요 7. 공구해요
     const [category, setCategory] = useState("");
@@ -60,7 +62,15 @@ export function UsedUpdate() {
                 setTitle(data.title)
                 setContent(data.content)
                 setPrice(data.price),
-                setCategory(String(data.category_id))
+                    setCategory(String(data.category_id)),
+                    // ↓↓↓ 기존 이미지들 배열로 만듦
+                    setExPics([
+                        data.main_img,
+                        data.detail_img1,
+                        data.detail_img2,
+                        data.detail_img3,
+                        data.detail_img4
+                    ].filter(Boolean)); // 비어있는 건 빼고
             }
         }
         fetchForm();
@@ -79,8 +89,10 @@ export function UsedUpdate() {
             e.target.value = ""; // 선택 취소
             return;
         }
+
         setFileCount(files.length);
         setImages(e); // 기존대로
+        setExPics([]);
     }
 
 
@@ -133,7 +145,7 @@ export function UsedUpdate() {
         } if (data) {
             //console.log(data)
             // todo: 글작성한 카테고리로 자동 이동하게 하기
-            navigate('/trade');
+            navigate('/trade/sell');
         }
     }
 
@@ -161,6 +173,25 @@ export function UsedUpdate() {
                 {fileCount !== images.length && (
                     <div>이미지 업로드 중입니다...</div>
                 )}
+                {/* 기존이미지 업로드 */}
+                <div>
+                    {exPics.length > 0 ? (
+                        exPics.map((img, i) => (
+                            <img key={i} src={img} alt={`기존 이미지 ${i + 1}`} style={{ width: '100px' }} />
+                            // src={getImages(img)}가 아니라, DB에 URL이 저장돼 있으면 그냥 img만
+                            // 만약 DB에는 상대경로만 있으면 src={getImages(img)}
+                        ))
+                    ) : (
+                        <div>기존 이미지 없음</div>
+                    )}
+                </div>
+
+                {/* 업로드하는 사진 보여줌 */}
+                {/* <div>
+                    {images.length > 0 && images.map((img, idx) => (
+                        <img key={idx} src={getImages(img)} alt={`이미지${idx + 1}`} style={{ width: 100, height: 100 }} />
+                    ))}
+                </div> */}
                 {/* 파일 개수가 맞을 때까지 등록버튼 꺼짐 */}
                 {/* <button onClick={handleCreate} disabled={fileCount !== images.length || images.length === 0}>등록</button> */}
                 <button onClick={handleUpdate}>수정</button>

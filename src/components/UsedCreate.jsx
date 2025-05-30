@@ -131,7 +131,7 @@ export function UsedCreate() {
         } if (data) {
             //console.log(data)
             // todo: 글작성한 카테고리로 자동 이동하게 하기
-            navigate('/trade');
+            navigate('/trade/sell');
         }
     }
     //console.log(images);
