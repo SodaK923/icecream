@@ -89,12 +89,12 @@ export function UsedUpdate() {
             e.target.value = ""; // 선택 취소
             return;
         }
-
         setFileCount(files.length);
-        setImages(e); // 기존대로
         setExPics([]);
+        setImages(e); // 기존대로
     }
 
+    const finalPics = images.length > 0 ? images : exPics;
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -130,11 +130,11 @@ export function UsedUpdate() {
                 content,
                 price: category === "5" ? 0 : Number(price),
                 category_id: Number(category),
-                main_img: images[0] ? getImages(images[0]) : null,
-                detail_img1: images[1] ? getImages(images[1]) : null,
-                detail_img2: images[2] ? getImages(images[2]) : null,
-                detail_img3: images[3] ? getImages(images[3]) : null,
-                detail_img4: images[4] ? getImages(images[4]) : null
+                main_img: finalPics[0] || null,
+                detail_img1: finalPics[1] || null,
+                detail_img2: finalPics[2] || null,
+                detail_img3: finalPics[3] || null,
+                detail_img4: finalPics[4] || null
                 //update_date: now,
                 //location
             })
