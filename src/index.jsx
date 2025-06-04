@@ -17,6 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { UsedSell } from './components/UsedSell';
 import { UsedShare } from './components/UsedShare';
+import { UsedBuy } from './components/UsedBuy';
 import { UsedCreate } from './components/UsedCreate';
 import { UsedDetail } from './components/UsedDetail';
 import { UsedUpdate } from './components/UsedUpdate';
@@ -44,6 +45,7 @@ function App() {
             <Route path='/trade/gonggu' element={<Trade />} />
             <Route path='/trade/sell' element={<UsedSell />} />
             <Route path='/trade/share' element={<UsedShare />} />
+            <Route path='/trade/buy' element={<UsedBuy />} />
             <Route path='/trade/write' element={<UsedCreate />} />
             <Route path='/trade/:id/:item/update' element={<UsedUpdate />} />
             {/* :id: 파라미터 */}
