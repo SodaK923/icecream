@@ -118,12 +118,12 @@ export function UsedCreate() {
                 create_date: now,
                 update_date: now, //null로 햇더니 오류남
                 cnt: 0,
+                state: 1,
                 // 공구에 들어가는 내용->null
                 sales_begin: null,
                 sales_end: null,
                 limit_type: null,
-                limit: null,
-                state: null
+                limit: null
             }])
             .select()
         if (error) {
@@ -160,6 +160,12 @@ export function UsedCreate() {
                 {fileCount !== images.length && (
                     <div>이미지 업로드 중입니다...</div>
                 )}
+                {/* 업로드하는 사진 보여줌 */}
+                <div>
+                    {images.length > 0 && images.map((img, idx) => (
+                        <img key={idx} src={getImages(img)} alt={`이미지${idx + 1}`} style={{ width: '100px' }} />
+                    ))}
+                </div>
                 {/* 파일 개수가 맞을 때까지 등록버튼 꺼짐 */}
                 {/* <button onClick={handleCreate} disabled={fileCount !== images.length || images.length === 0}>등록</button> */}
                 <button onClick={handleCreate}>등록</button>

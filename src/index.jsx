@@ -21,6 +21,7 @@ import { UsedBuy } from './components/UsedBuy';
 import { UsedCreate } from './components/UsedCreate';
 import { UsedDetail } from './components/UsedDetail';
 import { UsedUpdate } from './components/UsedUpdate';
+import { UsedOrder } from './components/UsedOrder';
 
 
 function Home() {
@@ -48,6 +49,7 @@ function App() {
             <Route path='/trade/buy' element={<UsedBuy />} />
             <Route path='/trade/write' element={<UsedCreate />} />
             <Route path='/trade/:id/:item/update' element={<UsedUpdate />} />
+            <Route path='/trade/:id/:item/order' element={<UsedOrder />} />
             {/* :id: 파라미터 */}
             <Route path='/trade' element={<Trade />} />
             <Route path="/product/:id" element={<Product />} />

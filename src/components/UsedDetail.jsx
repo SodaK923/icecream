@@ -13,6 +13,7 @@ export function UsedDetail() {
     const navigate = useNavigate();
 
     const [detail, setDetail] = useState(null);
+    // 로그인한 사람의 정보
     const { info: userInfo } = useUserTable();
 
     // 아이템 가져옴
@@ -95,6 +96,10 @@ export function UsedDetail() {
         navigate('update');
     }
 
+    const handleOrder=()=>{
+        navigate('order');
+    }
+
     if (!detail) return <div>로딩중</div>;
 
     const images = [detail.main_img, detail.detail_img1, detail.detail_img2, detail.detail_img3, detail.detail_img4].filter(Boolean);
@@ -115,6 +120,26 @@ export function UsedDetail() {
         if (diffHour > 0) return `${diffHour}시간 전`;
         if (diffMin > 0) return `${diffMin}분 전`;
         return "방금 전";
+    }
+
+    // 버튼 분기
+    const handleButtons = () => {
+        if (userInfo && userInfo.id === detail.user_id) {
+            return(
+                <div>
+                    <button onClick={handleUpdate}>글수정</button>
+                    <button onClick={deleteDetails}>삭제</button>
+                </div>
+            );
+        }else{
+            if(detail.category_id===4){
+                return <button onClick={handleOrder}>구매하기</button>;
+            }else if(detail.category_id===5){
+                return <button onClick={handleOrder}>나눔받기</button>;
+            }else{
+                return <button onClick={handleOrder}>팔기</button>;
+            }
+        }
     }
 
     return (
@@ -154,12 +179,13 @@ export function UsedDetail() {
                     {detail.category_id === 5 ? (<div>나눔</div>) : (<div>{Number(detail.price).toLocaleString()}원</div>)}
                 </div>
             </div>
-            {userInfo && userInfo.id === detail.user_id&&(
+            {/* {userInfo && userInfo.id === detail.user_id && (
                 <div>
                     <button onClick={handleUpdate}>글수정</button>
                     <button onClick={deleteDetails}>삭제</button>
                 </div>
-            )}
+            )} */}
+            <div>{handleButtons()}</div>
 
         </div>
     );

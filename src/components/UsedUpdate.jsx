@@ -62,16 +62,16 @@ export function UsedUpdate() {
             if (data) {
                 setTitle(data.title)
                 setContent(data.content)
-                setPrice(data.price),
-                    setCategory(String(data.category_id)),
-                    // ↓↓↓ 기존 이미지들 배열로 만듦
-                    setExPics([
-                        data.main_img,
-                        data.detail_img1,
-                        data.detail_img2,
-                        data.detail_img3,
-                        data.detail_img4
-                    ].filter(Boolean)); // 비어있는 건 빼고
+                setPrice(data.price)
+                setCategory(String(data.category_id))
+                // ↓↓↓ 기존 이미지들 배열로 만듦
+                setExPics([
+                    data.main_img,
+                    data.detail_img1,
+                    data.detail_img2,
+                    data.detail_img3,
+                    data.detail_img4
+                ].filter(Boolean)); // 비어있는 건 빼고
             }
         }
         fetchForm();
