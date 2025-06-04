@@ -39,7 +39,7 @@ export function UsedItem({ used }) {
             <Card.Body className="p-3 d-flex flex-column justify-content-between" style={{ height: 180 }}>
                 <div>
                     <div className="text-secondary small mb-1" style={{ height: 20, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {used.categories?.name} | {used.location}
+                        {used.categories?.name} · {used.location}
                     </div>
                     <Card.Title className="fw-bold fs-6 mb-1" style={{ minHeight: 22, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                         {used.title}

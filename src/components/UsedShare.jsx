@@ -1,3 +1,4 @@
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from "../supabase/supabase";
@@ -10,7 +11,7 @@ export function UsedShare() {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            let { data, error } = await supabase
+            const { data, error } = await supabase
                 .from('trades')
                 .select('*,categories(name), users(name)')
                 .eq('category_id', 5)
@@ -31,14 +32,17 @@ export function UsedShare() {
     }
 
     return (
-        <div>
-            <button onClick={handleCreate} style={{cursor: 'pointer'}}>글작성</button>
-            {posts.map((used) => (
-                <UsedItem key={used.id} used={used}>
-                    {/* <img src={used.main_img} style={{ width: "100px" }} /> */}
-                </UsedItem>
-            ))}
-            
-        </div>
+        <Container className="mt-4">
+            <div className="mb-3 d-flex justify-content-end">
+                <Button onClick={handleCreate} variant="primary" style={{ borderRadius: 16 }}>글작성</Button>
+            </div>
+            <Row className="g-4">
+                {posts.map((used) => (
+                    <Col key={used.id} xs={12} sm={6} md={4} lg={3}>
+                        <UsedItem used={used} />
+                    </Col>
+                ))}
+            </Row>
+        </Container>
     );
 }

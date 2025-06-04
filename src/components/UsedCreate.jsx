@@ -123,7 +123,7 @@ export function UsedCreate() {
                 sales_begin: null,
                 sales_end: null,
                 limit_type: null,
-                limit: null
+                limit: null,
             }])
             .select()
         if (error) {
