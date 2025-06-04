@@ -1,9 +1,8 @@
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from "../supabase/supabase";
-//import { Product } from './Product';
 import { UsedItem } from './UsedItem';
-
 
 export function UsedSell() {
     const [posts, setPosts] = useState([]);
@@ -19,7 +18,6 @@ export function UsedSell() {
                 .order('create_date', { ascending: false });
             if (error) {
                 console.log("error: ", error);
-                console.log("data: ", data);
             }
             if(data) {
                 setPosts(data);
@@ -28,21 +26,24 @@ export function UsedSell() {
         fetchPosts();
     }, []);
 
-    if(!posts) return <div>로딩중</div>;
+    if (!posts) return <div>로딩중</div>;
 
-    const handleCreate=()=>{
+    const handleCreate = () => {
         navigate('/trade/write');
     }
 
     return (
-        <div>
-            <button onClick={handleCreate} style={{cursor: 'pointer'}}>글작성</button>
-            {posts.map((used) => (
-                <UsedItem key={used.id} used={used}>
-                    {/* <img src={used.main_img} style={{ width: "100px" }} /> */}
-                </UsedItem>
-            ))}
-            
-        </div>
+        <Container className="mt-4">
+            <div className="mb-3 d-flex justify-content-end">
+                <Button onClick={handleCreate} variant="primary" style={{ borderRadius: 16 }}>글작성</Button>
+            </div>
+            <Row className="g-4">
+                {posts.map((used) => (
+                    <Col key={used.id} xs={12} sm={6} md={4} lg={3}>
+                        <UsedItem used={used} />
+                    </Col>
+                ))}
+            </Row>
+        </Container>
     );
 }
