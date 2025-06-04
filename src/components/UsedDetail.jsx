@@ -12,6 +12,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 export function UsedDetail() {
     const { item } = useParams();
     const navigate = useNavigate();
+    const now = new Date().toISOString();
 
     const [detail, setDetail] = useState(null);
     // 로그인한 사람의 정보
@@ -22,10 +23,10 @@ export function UsedDetail() {
         const fetchDetails = async () => {
             const { data, error } = await supabase
                 .from('trades')
-                .select('*, categories(*), users(name)')
+                .select('*, categories(*), users(id, name)')
                 .eq('id', item)
                 .single();
-                console.log(data);
+            console.log(data);
             if (error) {
                 console.log('error: ', error);
             }
@@ -93,14 +94,55 @@ export function UsedDetail() {
         }
     }
 
+    const makeChats = async () => {
+        const { data, error } = await supabase
+            .from('chats')
+            .insert([{
+                sender_id: userInfo.id,
+                receiver_id: detail.users?.id,
+                chat: '띵동',
+                create_date: now,
+                read: false,
+                trades_id: detail.id,
+                trades_quantity: 1
+            }])
+            .select()
+        if (error) {
+            console.log('error: ', error);
+        }
+        if (data) {
+            console.log('data: ', data);
+            alert('채팅이 전송되었습니다.');
+        }
+    }
+
+    // 버튼 분기
+    const handleButtons = () => {
+        if (userInfo && userInfo.id === detail.user_id) {
+            return (
+                <div>
+                    <Button onClick={handleUpdate}>글수정</Button>
+                    <Button onClick={deleteDetails}>삭제</Button>
+                </div>
+            );
+        } else {
+            if (detail.category_id === 4) {
+                return <Button onClick={makeChats}>구매하기</Button>;
+            } else if (detail.category_id === 5) {
+                return <Button onClick={makeChats}>나눔받기</Button>;
+            } else {
+                return <Button onClick={makeChats}>팔기</Button>;
+            }
+        }
+    }
+
+
+
     // todo: 글 수정
     const handleUpdate = () => {
         navigate('update');
     }
 
-    const handleOrder=()=>{
-        navigate('order');
-    }
 
     if (!detail) return <div>로딩중</div>;
 
@@ -124,25 +166,7 @@ export function UsedDetail() {
         return "방금 전";
     }
 
-    // 버튼 분기
-    const handleButtons = () => {
-        if (userInfo && userInfo.id === detail.user_id) {
-            return(
-                <div>
-                    <Button onClick={handleUpdate}>글수정</Button>
-                    <Button onClick={deleteDetails}>삭제</Button>
-                </div>
-            );
-        }else{
-            if(detail.category_id===4){
-                return <Button onClick={handleOrder}>구매하기</Button>;
-            }else if(detail.category_id===5){
-                return <Button onClick={handleOrder}>나눔받기</Button>;
-            }else{
-                return <Button onClick={handleOrder}>팔기</Button>;
-            }
-        }
-    }
+
 
     return (
         <Card className="border-0" style={{ maxWidth: 1100, margin: "30px auto", borderRadius: 18 }}>
@@ -196,7 +220,6 @@ export function UsedDetail() {
                             작성자: {detail.users?.name ?? '알 수 없음'}
                         </div>
                         <div className="d-flex gap-2">
-                            {/* handleButtons()은 네가 만든 버튼 함수 리턴 */}
                             {handleButtons()}
                         </div>
                     </div>
@@ -204,52 +227,4 @@ export function UsedDetail() {
             </Row>
         </Card>
     );
-
-    // return (
-    //     <div>
-    //         <div style={{ maxWidth: "500px" }}>
-    //             <Carousel>
-    //                 {images.length === 0 ? (
-    //                     <Carousel.Item>
-    //                         <div className="text-center p-5">이미지가 없습니다.</div>
-    //                     </Carousel.Item>
-    //                 ) : (
-    //                     images.map((img, idx) => (
-    //                         <Carousel.Item key={idx}>
-    //                             <img
-    //                                 src={img}
-    //                                 alt={`상세 이미지 ${idx + 1}`}
-    //                                 className="d-block mx-auto"
-    //                                 style={{
-    //                                     width: "100%",
-    //                                     height: "100%",
-    //                                     objectFit: "cover",
-    //                                     borderRadius: "1rem"
-    //                                 }}
-    //                             />
-    //                         </Carousel.Item>
-    //                     ))
-    //                 )}
-    //             </Carousel>
-    //         </div>
-    //         <div>
-    //             <div>{getDateDiff(detail.create_date)}</div>
-    //             <div>제목: {detail.title}</div>
-    //             <div>내용: {detail.content}</div>
-    //             <div>작성자: {detail.users?.name ?? '알 수 없음'}</div>
-    //             <div>조회수: {detail?.cnt ?? 0}</div>
-    //             <div>
-    //                 {detail.category_id === 5 ? (<div>나눔</div>) : (<div>{Number(detail.price).toLocaleString()}원</div>)}
-    //             </div>
-    //         </div>
-    //         {/* {userInfo && userInfo.id === detail.user_id && (
-    //             <div>
-    //                 <button onClick={handleUpdate}>글수정</button>
-    //                 <button onClick={deleteDetails}>삭제</button>
-    //             </div>
-    //         )} */}
-    //         <div>{handleButtons()}</div>
-
-    //     </div>
-    // );
-} 
+}
