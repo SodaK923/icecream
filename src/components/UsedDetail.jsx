@@ -5,6 +5,7 @@ import { supabase } from "../supabase/supabase";
 import { useNavigate } from "react-router-dom";
 import { useUserTable } from "../hooks/useUserTable";
 import { Carousel, Row, Col, Button, Badge, Card } from 'react-bootstrap';
+import { FaRegHeart } from "react-icons/fa";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -126,6 +127,7 @@ export function UsedDetail() {
                 </div>
             );
         } else {
+            //return <Button variant="outline-danger"><FaRegHeart /> 좋아요</Button>;
             if (detail.category_id === 4) {
                 return <Button onClick={makeChats}>구매하기</Button>;
             } else if (detail.category_id === 5) {
@@ -220,6 +222,7 @@ export function UsedDetail() {
                             작성자: {detail.users?.name ?? '알 수 없음'}
                         </div>
                         <div className="d-flex gap-2">
+                            
                             {handleButtons()}
                         </div>
                     </div>
